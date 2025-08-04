@@ -1,9 +1,12 @@
 package orderApp.controller;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,4 +73,21 @@ public class RestaurantController {
 		
 		return new ResponseEntity<>(apiResponse,HttpStatus.OK);
 	}
+	
+	@DeleteMapping("/{id}/delete")
+	public ResponseEntity deleteRestaurant(@PathVariable Integer id) {
+		restaurantService.deleteRestaurant(id);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	
+	@PostMapping("/{restaurantId}/assignFood")
+	public ResponseEntity<ResponseStructure<Restaurant>> assignFood(@PathVariable Integer restaurantId, @RequestBody Set<Integer> food){
+		Restaurant restaurant = restaurantService.assignFood(restaurantId, food);
+		ResponseStructure<Restaurant> apiResponse = new ResponseStructure<>();
+		apiResponse.setData(restaurant);
+		apiResponse.setMessage("Assigned");
+		apiResponse.setStatusCode(HttpStatus.OK.value());
+		return ResponseEntity.ok(apiResponse);
+	}
+	
 }
