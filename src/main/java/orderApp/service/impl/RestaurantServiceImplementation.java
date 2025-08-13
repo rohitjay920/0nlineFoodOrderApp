@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import orderApp.entity.Food;
+import orderApp.entity.Order;
 import orderApp.entity.Restaurant;
 import orderApp.repository.FoodRepository;
 import orderApp.repository.RestaurantRepository;
@@ -45,6 +46,17 @@ public class RestaurantServiceImplementation implements RestaurantService{
 		}
 		
 //		return restaurantRepository.findById(id).orElseThrow(()->new NoSuchElementException("Restaurant with ID: "+id+" not found"));
+	}
+	
+	public List<Food> findFoodByRestaurantId(Integer id){
+		List<Food> food = restaurantRepository.findFoodByRestaurantId(id);
+		if(food==null || food.size()==0) {
+			throw new NoSuchElementException("Restaurant with ID: "+id+" not found or the food is not"
+					+ "assigned to restaurant");
+		}
+		else {
+			return food;
+		}
 	}
 
 	@Override
@@ -87,6 +99,19 @@ public class RestaurantServiceImplementation implements RestaurantService{
 		restaurant.setFood(foodItems);
 		
 		return restaurantRepository.save(restaurant);
+	}
+
+	@Override
+	public List<Order> findOrdersByRestaurantId(Integer id) {
+		List<Order> orders = restaurantRepository.findOrdersByRestaurantId(id);
+		if(orders==null || orders.size()==0) {
+			throw new NoSuchElementException("Restaurant with ID: "+id+" not found or there are no "
+					+ "orders");
+		}
+		else {
+			return orders;
+		}
+		
 	}
 
 	
