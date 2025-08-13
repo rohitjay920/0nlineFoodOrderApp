@@ -1,5 +1,6 @@
 package orderApp.controller;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import orderApp.dto.ResponseStructure;
+import orderApp.entity.Food;
+import orderApp.entity.Order;
 import orderApp.entity.Restaurant;
 import orderApp.service.RestaurantService;
 
@@ -86,6 +89,24 @@ public class RestaurantController {
 		ResponseStructure<Restaurant> apiResponse = new ResponseStructure<>();
 		apiResponse.setData(restaurant);
 		apiResponse.setMessage("Assigned");
+		apiResponse.setStatusCode(HttpStatus.OK.value());
+		return ResponseEntity.ok(apiResponse);
+	}
+	
+	@GetMapping("/{id}/getAll")
+	public ResponseEntity<ResponseStructure<List<Food>>> getFoodByRestaurant(@PathVariable Integer id){
+		ResponseStructure<List<Food>> apiResponse = new ResponseStructure();
+		apiResponse.setData(restaurantService.findFoodByRestaurantId(id));
+		apiResponse.setMessage("Food items found");
+		apiResponse.setStatusCode(HttpStatus.OK.value());
+		return ResponseEntity.ok(apiResponse);
+	}
+	
+	@GetMapping("/{id}/getAllOrders")
+	public ResponseEntity<ResponseStructure<List<Order>>> getOrdersByRestaurant(@PathVariable Integer id){
+		ResponseStructure<List<Order>> apiResponse = new ResponseStructure();
+		apiResponse.setData(restaurantService.findOrdersByRestaurantId(id));
+		apiResponse.setMessage("Orders found");
 		apiResponse.setStatusCode(HttpStatus.OK.value());
 		return ResponseEntity.ok(apiResponse);
 	}
