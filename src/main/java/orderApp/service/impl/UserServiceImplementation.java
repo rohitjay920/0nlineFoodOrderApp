@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,13 +37,14 @@ public class UserServiceImplementation implements UserService{
 		throw new NoSuchElementException("User with ID: "+id+" does not exist");
 	}
 	
-
+	
+	@Cacheable(value = "user_cache")
 	@Override
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
 	}
 	
-	
+	@CachePut(value = "user_cache",key="#id")
 	@Override
 	public User updateUser(User user, Integer id) {
 		User existing = getUser(id);
@@ -51,11 +55,18 @@ public class UserServiceImplementation implements UserService{
 		existing.setPassword(user.getPassword());
 		return userRepository.save(existing);
 	}
-
+	
+	@CacheEvict(value = "user_cache",key = "#id")
 	@Override
 	public void deleteUser(Integer id) {
 		User user = getUser(id);
 		userRepository.delete(user);
+	}
+	
+	@CacheEvict(value = "user_cache",allEntries = true)
+	@Scheduled(fixedRate = 120000) //evict cache every 2 minutes
+	public void evictAllCache() {
+		System.out.println("Evicting all entries from 'user_cache' cache");
 	}
 
 	@Override

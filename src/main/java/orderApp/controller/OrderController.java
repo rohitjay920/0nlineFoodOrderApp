@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import orderApp.dto.BillResponse;
 import orderApp.dto.OrderRequest;
 import orderApp.dto.PaymentDto;
@@ -29,7 +30,7 @@ public class OrderController {
 	private OrderService orderService;
 	
 	@PostMapping("/generate-bill")
-	public ResponseEntity<ResponseStructure<BillResponse>> generateBill(@RequestBody OrderRequest orderRequest){
+	public ResponseEntity<ResponseStructure<BillResponse>> generateBill(@Valid @RequestBody OrderRequest orderRequest){
 		BillResponse response = orderService.generateBill(orderRequest);
 		ResponseStructure<BillResponse> apiResponse = new ResponseStructure();
 		apiResponse.setData(response);
@@ -40,7 +41,7 @@ public class OrderController {
 	}
 	
 	@PostMapping("/pay-and-place-order")
-	public ResponseEntity<ResponseStructure<String>> payAndPlaceOrder(@RequestBody PaymentDto payment){
+	public ResponseEntity<ResponseStructure<String>> payAndPlaceOrder(@Valid @RequestBody PaymentDto payment){
 		String data = orderService.payAndPlaceOrder(payment);
 		ResponseStructure<String> apiResponse = new ResponseStructure();
 		apiResponse.setData(data);
